@@ -48,7 +48,7 @@ void __init s3c64xx_init_cpu(void)
 		__raw_writel(0x0, S3C_VA_SYS + 0xA1C);
 		samsung_cpu_id = __raw_readl(S3C_VA_SYS + 0xA1C);
 	}
-	
+
 	samsung_cpu_rev = 0;
 }
 

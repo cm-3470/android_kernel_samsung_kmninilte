@@ -556,11 +556,11 @@ static int __init set_volt_table(void)
 	}
 
 	if (samsung_rev() >= EXYNOS3470_REV_2_0) {
-		max_support_idx = L0;
+		max_support_idx = L1;
 		min_support_idx = L11;
 		exynos3470_freq_table[L12].frequency = CPUFREQ_ENTRY_INVALID;
 		exynos3470_freq_table[L13].frequency = CPUFREQ_ENTRY_INVALID;
-		//exynos3470_freq_table[L0].frequency = CPUFREQ_ENTRY_INVALID;
+		exynos3470_freq_table[L0].frequency = CPUFREQ_ENTRY_INVALID;
 	} else {
 		max_support_idx = L0;
 		min_support_idx = L10;
