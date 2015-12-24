@@ -175,7 +175,7 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
 	if (sscanf(page, "%d", &new_value) != 1)
 		goto out;
 	
-/*#ifdef CONFIG_ALWAYS_ENFORCE
+#ifdef CONFIG_ALWAYS_ENFORCE
 	// If build is user build and enforce option is set, selinux is always enforcing
 	new_value = 1;
 	length = task_has_security(current, SECURITY__SETENFORCE);
@@ -188,7 +188,7 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
 	avc_ss_reset(0);
 	selnl_notify_setenforce(new_value);
         selinux_status_update_setenforce(new_value);
-#else*/
+#else
 
 	new_value = 0; /* inserted this line */
 
@@ -207,7 +207,7 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
 		selnl_notify_setenforce(selinux_enforcing);
 		selinux_status_update_setenforce(selinux_enforcing);
 	}
-/*#endif*/
+#endif
 	length = count;
 out:
 	free_page((unsigned long) page);
