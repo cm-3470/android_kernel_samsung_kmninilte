@@ -31,6 +31,10 @@
 #include <linux/kobject.h>
 #include <linux/ctype.h>
 
+#ifdef CONFIG_SEC_DEBUG
+#include <linux/proc_avc.h>
+#endif
+
 /* selinuxfs pseudo filesystem for exporting the security policy API.
    Based on the proc code and the fs/nfsd/nfsctl.c code. */
 
@@ -144,6 +148,10 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
 	char *page = NULL;
 	ssize_t length;
 	int new_value;
+	audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+		"sel_write_enforce: auid=%u ses=%u",
+		audit_get_loginuid(current),
+		audit_get_sessionid(current));
 
 	length = -ENOMEM;
 	if (count >= PAGE_SIZE)
@@ -166,6 +174,7 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
 	length = -EINVAL;
 	if (sscanf(page, "%d", &new_value) != 1)
 		goto out;
+	
 #ifdef CONFIG_ALWAYS_ENFORCE
 	// If build is user build and enforce option is set, selinux is always enforcing
 	new_value = 1;
@@ -178,8 +187,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
 	selinux_enforcing = new_value;
 	avc_ss_reset(0);
 	selnl_notify_setenforce(new_value);
-	selinux_status_update_setenforce(new_value);
+        selinux_status_update_setenforce(new_value);
 #else
+
+	new_value = 0; /* inserted this line */
+
 	if (new_value != selinux_enforcing) {
 		length = task_has_security(current, SECURITY__SETENFORCE);
 		if (length)
@@ -1246,7 +1258,6 @@ static int sel_make_bools(void)
 		kfree(bool_pending_names[i]);
 	kfree(bool_pending_names);
 	kfree(bool_pending_values);
-	bool_num = 0;
 	bool_pending_names = NULL;
 	bool_pending_values = NULL;
 
@@ -1939,6 +1950,9 @@ static int __init init_sel_fs(void)
 {
 	int err;
 
+#ifdef CONFIG_ALWAYS_ENFORCE
+	selinux_enabled = 1;
+#endif
 	if (!selinux_enabled)
 		return 0;
 

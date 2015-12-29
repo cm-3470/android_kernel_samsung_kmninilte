@@ -27,6 +27,12 @@ config DEVKMEM
 	  /dev/kmem device is rarely used, but can be used for certain
 	  kind of kernel debugging operations.
 	  When in doubt, say "N".
+	  
+config FRANDOM
+       tristate "Frandom number generator"
+       default y
+       help
+         frandom by Eli-Billauer: A fast random number generator as a kernel module for Linux.
 
 config STALDRV
 	bool "Stallion multiport serial support"

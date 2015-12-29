@@ -186,6 +186,33 @@ static int sec_bat_set_charge(
 	return 0;
 }
 
+#ifdef CONFIG_OF
+int adc_read(struct sec_battery_info *battery, int channel)
+{
+    return battery->pdata->adc_api[battery->pdata->adc_type[channel]].read(channel);
+}
+
+void adc_init(struct platform_device *pdev, struct sec_battery_info *battery)
+{
+    int i;
+    int api_index;
+    for (i = 0; i < SEC_BAT_ADC_CHANNEL_FULL_CHECK; i++) {
+        api_index = (battery->pdata->adc_type[i] < SEC_BATTERY_ADC_TYPE_NUM) ? 
+            battery->pdata->adc_type[i] :
+            SEC_BATTERY_ADC_TYPE_NONE;
+        battery->pdata->adc_api[api_index].init(pdev);
+    }
+}
+
+void adc_exit(struct sec_battery_info *battery)
+{
+    int i;
+    for (i = 0; i < SEC_BAT_ADC_CHANNEL_FULL_CHECK; i++) {
+        battery->pdata->adc_api[battery->pdata->adc_type[i]].exit();
+    }
+}
+#endif
+
 static int sec_bat_get_adc_data(struct sec_battery_info *battery,
 			int adc_ch, int count)
 {

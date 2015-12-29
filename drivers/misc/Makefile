@@ -59,6 +59,7 @@ obj-$(CONFIG_MCU_IPC)		+= mcu_ipc/
 obj-$(CONFIG_SEC_MODEM_V2)	+= modem_v2/
 obj-$(CONFIG_SEC_MODEM_V1)	+= modem_v1/
 obj-$(CONFIG_SEC_MODEM_IF)	+= modem_if/
+obj-$(CONFIG_UID_CPUTIME) += uid_cputime.o
 
 # Secure OS Mobicore Interface
 obj-$(CONFIG_MOBICORE_DRIVER)  += tzic.o
